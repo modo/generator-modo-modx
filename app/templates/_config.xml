@@ -22,7 +22,7 @@
 -->
 <modx>
 	<database_type>mysql</database_type>
-    <database_server><%= dbHostname %></database_server>
+    <database_server><%= dbHost %></database_server>
     <database><%= dbName %></database>
     <database_user><%= dbUser %></database_user>
     <database_password><%= dbPassword %></database_password>
@@ -31,7 +31,7 @@
     <database_collation>utf8_general_ci</database_collation>
     <table_prefix><%= dbTablePrefix %></table_prefix>
     <https_port>443</https_port>
-    <http_host><%= dbHostname %></http_host>
+    <http_host><%= dbHost %></http_host>
     <cache_disabled>0</cache_disabled>
 
     <!-- Set this to 1 if you are using MODX from Git or extracted it from the full MODX package to the server prior

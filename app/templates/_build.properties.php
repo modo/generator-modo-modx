@@ -4,8 +4,8 @@ $properties['cache_path'] = MODX_CORE_PATH . '/' . (MODX_CONFIG_KEY === 'config'
 
 /* driver-specific connection properties */
 /* mysql */
-$properties['mysql_string_dsn_test']= 'mysql:host=localhost;dbname=<%= dbName %>;charset=utf8';
-$properties['mysql_string_dsn_nodb']= 'mysql:host=localhost;charset=utf8';
+$properties['mysql_string_dsn_test']= 'mysql:host=<%= dbHost %>;dbname=<%= dbName %>;charset=utf8';
+$properties['mysql_string_dsn_nodb']= 'mysql:host=<%= dbHost %>;charset=utf8';
 $properties['mysql_string_dsn_error']= 'mysql:host= nonesuchhost;dbname=nonesuchdb';
 $properties['mysql_string_username']= '<%= dbUser %>';
 $properties['mysql_string_password']= '<%= dbPassword %>';

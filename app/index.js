@@ -6,8 +6,7 @@ var request = require('request'),
     yeoman = require('yeoman-generator'),
     AdmZip = require('adm-zip'),
     async = require('async'),
-    shell = require('shelljs'),
-    publicFolder;
+    shell = require('shelljs');
 
 var ModxGenerator = yeoman.generators.Base.extend({
 
@@ -23,8 +22,6 @@ var ModxGenerator = yeoman.generators.Base.extend({
         this.gitClone = this.options['git-clone'] || false;
         this.config.set('gitClone', this.gitClone);
 
-        this.publicFolder = 'public/';
-
     },
 
     prompting: function () {
@@ -35,10 +32,20 @@ var ModxGenerator = yeoman.generators.Base.extend({
         self.log(this.yeoman);
 
         var prompts = [{
-            name: 'dbName',
-            message: 'Database name:',
-            default: ''
-        },
+                name: 'publicFolder',
+                message: 'Document Root:',
+                default: 'public'
+            },
+            {
+                name: 'dbHost',
+                message: 'Host:',
+                default: 'localhost'
+            },
+            {
+                name: 'dbName',
+                message: 'Database:',
+                default: ''
+            },
             {
                 name: 'dbUser',
                 message: 'Database user:',
@@ -50,14 +57,14 @@ var ModxGenerator = yeoman.generators.Base.extend({
                 default: 'root'
             },
             {
-                name: 'dbHostname',
-                message: 'Database host:',
-                default: 'localhost'
-            },
-            {
                 name: 'dbTablePrefix',
                 message: 'Database table prefix:',
                 default: 'modx_'
+            },
+            {
+                name: 'modxVersion',
+                message: 'Modx Version:',
+                default: '2.3.2'
             }
         ];
 
@@ -103,9 +110,10 @@ var ModxGenerator = yeoman.generators.Base.extend({
                 if (key != 'cmspassword') config[key] = value;
             });
 
+            self.publicFolder = self._trailingSlach(self.publicFolder, true);
+
             if (!self.packageName && self.gitClone !== false) {
-                var str = self.gitClone;
-                if (str.substr(-1) == '/') str = str.substr(0, str.length - 1);
+                var str = self._trailingSlach(self.gitClone, false);
                 var res = str.split('/');
 
                 self.packageName = res.pop();
@@ -128,8 +136,8 @@ var ModxGenerator = yeoman.generators.Base.extend({
                 done = self.async();
 
             if (!fs.existsSync(self.publicFolder)) {
-                self.log('Downloading latest version of MODx...');
-                request('https://github.com/modxcms/revolution/archive/master.zip').pipe(fs.createWriteStream('modx.zip')).on('close', done);
+                self.log('Downloading MODx v'+self.modxVersion);
+                request('https://github.com/modxcms/revolution/archive/v' + self.modxVersion + '-pl.zip').pipe(fs.createWriteStream('modx.zip')).on('close', done);
             } else {
                 done();
             }
@@ -150,7 +158,7 @@ var ModxGenerator = yeoman.generators.Base.extend({
             if (fs.existsSync(self.publicFolder)) return;
 
             self.log('Cleaning up...');
-            fs.renameSync('./revolution-master', './public');
+            fs.renameSync('./revolution-' + self.modxVersion + '-pl', './'+self.publicFolder);
             fs.unlinkSync('./modx.zip');
         },
 
@@ -235,6 +243,23 @@ var ModxGenerator = yeoman.generators.Base.extend({
         var self = this,
             newDir = path.join(self.packageDir, self.packageName);
         this.mkdir(newDir);
+    },
+
+    _trailingSlach: function(uri, add) {
+        add = typeof add !== 'undefined' ? add : true;
+        if (uri.substr(-1) == '/') {
+            if (add) {
+                return uri;
+            } else {
+                return uri.substr(0, uri.length - 1);
+            }
+        } else {
+            if (add) {
+                return uri + '/';
+            } else {
+                return uri;
+            }
+        }
     }
 
 });
